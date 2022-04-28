@@ -15,6 +15,8 @@ import com.DLY.service.SetmealService;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +27,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+@Api(tags = "套餐相关接口")
 @RestController
 @RequestMapping("/setmeal")
 public class SetmealController {
@@ -39,6 +42,7 @@ public class SetmealController {
     @Autowired
     DishService dishService;
 
+    @ApiOperation("返回页面数据")
     @GetMapping("/page")
     public R getall(
             @RequestParam Integer page,

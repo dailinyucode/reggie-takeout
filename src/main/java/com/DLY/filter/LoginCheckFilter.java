@@ -41,7 +41,12 @@ public class LoginCheckFilter implements Filter {
                 "/addressBook/**",
                 "/dish/**",
                 "/setmeal/**",
-                "/order/**"
+                "/order/**",
+                "/doc.html",    //放行swagger
+                "/webjars/**",
+                "/swagger-resources",
+                "/v2/api-docs",
+                "/favicon.ico"
         };
         boolean check=check(urls,requestURI);   //路径匹配情况
 

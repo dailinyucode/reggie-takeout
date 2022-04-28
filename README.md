@@ -1,5 +1,5 @@
-#瑞吉外卖项目开发
-###技术栈
+# 瑞吉外卖项目开发
+### 技术栈
 1. springboot
 2. mybatis-plus
 3. redis
