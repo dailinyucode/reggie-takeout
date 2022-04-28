@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.DLY.mapper.SetmealDishMapper">
+
+    <resultMap id="BaseResultMap" type="com.DLY.pojo.SetmealDish">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="setmealId" column="setmeal_id" jdbcType="VARCHAR"/>
+            <result property="dishId" column="dish_id" jdbcType="VARCHAR"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="copies" column="copies" jdbcType="INTEGER"/>
+            <result property="sort" column="sort" jdbcType="INTEGER"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="BIGINT"/>
+            <result property="updateUser" column="update_user" jdbcType="BIGINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,setmeal_id,dish_id,
+        name,price,copies,
+        sort,create_time,update_time,
+        create_user,update_user,is_deleted
+    </sql>
+
+    <select id="getlistBySid" resultType="com.DLY.pojo.SetmealDish">
+        select * from setmeal_dish where setmeal_id=#{sid}
+    </select>
+</mapper>

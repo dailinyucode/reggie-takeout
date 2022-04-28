@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.DLY.mapper.SetmealMapper">
+
+    <resultMap id="BaseResultMap" type="com.DLY.pojo.Setmeal">
+            <id property="id" column="id" jdbcType="BIGINT"/>
+            <result property="categoryId" column="category_id" jdbcType="BIGINT"/>
+            <result property="name" column="name" jdbcType="VARCHAR"/>
+            <result property="price" column="price" jdbcType="DECIMAL"/>
+            <result property="status" column="status" jdbcType="INTEGER"/>
+            <result property="code" column="code" jdbcType="VARCHAR"/>
+            <result property="description" column="description" jdbcType="VARCHAR"/>
+            <result property="image" column="image" jdbcType="VARCHAR"/>
+            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+            <result property="createUser" column="create_user" jdbcType="BIGINT"/>
+            <result property="updateUser" column="update_user" jdbcType="BIGINT"/>
+            <result property="isDeleted" column="is_deleted" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="getSetmealDto" type="com.DLY.dto.SetmealDto" extends="BaseResultMap">
+        <result property="categoryName" column="categoryName"/>
+        <collection property="setmealDishes" javaType="java.util.List" ofType="com.DLY.pojo.SetmealDish"
+                    select="com.DLY.mapper.SetmealDishMapper.getlistBySid"
+                    column="{sid=id}"
+        />
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id,category_id,name,
+        price,status,code,
+        description,image,create_time,
+        update_time,create_user,update_user,
+        is_deleted
+    </sql>
+    <select id="fandall" resultType="com.DLY.dto.SetmealDto">
+        SELECT setmeal.*,category.`name` as `categoryName` FROM setmeal
+               left join category on category.id=setmeal.category_id
+                ${ew.customSqlSegment}
+    </select>
+    <select id="getontDto" resultMap="getSetmealDto">
+        SELECT
+            setmeal.*,
+            category.`name` AS `categoryName`
+        FROM
+            setmeal
+                LEFT JOIN category ON category.id = setmeal.category_id
+        WHERE setmeal.id=#{id}
+    </select>
+</mapper>
