@@ -22,7 +22,7 @@ class ReggieTakeOutApplicationTests {
 
     @Test
     void redisTest(){
-        redisTemplate.boundValueOps("123").set("436");
-        System.out.println();
+        redisTemplate.opsForValue().set("123","456");
+        System.out.println(redisTemplate.opsForValue().get("123"));
     }
 }

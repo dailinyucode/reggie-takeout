@@ -15,12 +15,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @RestController
 @RequestMapping("/dish")
@@ -33,6 +36,8 @@ public class DishController {
     CategoryService categoryService;
     @Autowired
     DishFlavorService dishFlavorService;
+    @Autowired
+    RedisTemplate redisTemplate;
 
     @GetMapping("/page")
     public R getall(
@@ -84,6 +89,9 @@ public class DishController {
     public R sava(
             @RequestBody DishDto dishDto
             ){
+        Set keys = redisTemplate.keys("dish_" + dishDto.getCategoryId().toString()+"_1");
+        redisTemplate.delete(keys);
+
         dishService.saveWithFiavor(dishDto);
         return R.success(null);
     }
@@ -92,6 +100,13 @@ public class DishController {
     public R put(
             @RequestBody DishDto dishDto
     ){
+        //删除所有
+//        Set keys = redisTemplate.keys("dish_*");
+//        redisTemplate.delete(keys);
+        //精确清理
+        Set keys = redisTemplate.keys("dish_" + dishDto.getCategoryId().toString()+"_1");
+        redisTemplate.delete(keys);
+
         dishService.updateWithFiavor(dishDto);
        return R.success(null);
     };
@@ -146,8 +161,20 @@ public class DishController {
      */
     @GetMapping("/list")
     public R getlist(
-            @RequestParam Long categoryId
+            @RequestParam Long categoryId,
+            @RequestParam Integer status
     ){
+
+        String key="dish_"+categoryId+"_"+status;
+        //从redis中获取缓存数据
+        List<DishDto> dish =(List<DishDto>)redisTemplate.opsForValue().get(key);
+        //log.info(dish.toString());
+        //如果存在，直接返回 无需查询数据库
+        if(dish!=null){
+            return R.success(dish);
+        }
+
+        //不存在再去数据库查询，并保存的redis
         List<Dish> list = dishService.list(new LambdaQueryWrapper<Dish>()
                 //保证是起售状态的
                 .eq(Dish::getCategoryId, categoryId).eq(Dish::getStatus, 1));
@@ -165,6 +192,8 @@ public class DishController {
 
             dishDtoList.add(dishDto);
         });
+
+        redisTemplate.opsForValue().set(key,dishDtoList,60,TimeUnit.MINUTES);
 
         return R.success(dishDtoList);
     }
