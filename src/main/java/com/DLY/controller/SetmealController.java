@@ -17,6 +17,8 @@ import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -77,6 +79,7 @@ public class SetmealController {
         return R.success(setmealMapper.getontDto(id));
     }
 
+    @CacheEvict(value = "setmealCache",allEntries = true)
     @PostMapping
     public R save(
             @RequestBody SetmealDto setmealDto
@@ -85,6 +88,7 @@ public class SetmealController {
         return R.success(null);
     }
 
+    @CacheEvict(value = "setmealCache",allEntries = true)
     @DeleteMapping
     public R delete(
             @RequestParam List<Long> ids
@@ -107,6 +111,12 @@ public class SetmealController {
         return R.success(null);
     }
 
+    /**
+     * allEntries删除这个分类下面的所有数据
+     * @param setmealDto
+     * @return
+     */
+    @CacheEvict(value = "setmealCache",allEntries = true)
     @PutMapping
     public R put(
             @RequestBody SetmealDto setmealDto
@@ -116,6 +126,7 @@ public class SetmealController {
         return R.success(null);
     }
 
+    @Cacheable(value = "setmealCache",key = "#categoryId+'_'+#status")
     @GetMapping("list")
     public R list(
             @RequestParam Long categoryId,
